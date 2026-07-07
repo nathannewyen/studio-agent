@@ -1,0 +1,41 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - ENV=development
+      - DATABASE_URL=postgresql://agentstudio:agentstudio@db:5432/agentstudio
+    restart: always
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=agentstudio
+      - POSTGRES_PASSWORD=agentstudio
+      - POSTGRES_DB=agentstudio
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Test Database
+  test_db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=agentstudio
+      - POSTGRES_PASSWORD=agentstudio
+      - POSTGRES_DB=agentstudio_test
+    ports:
+      - "5433:5432"
+
+volumes:
+  postgres_data:
