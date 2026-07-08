@@ -6,14 +6,22 @@ from database.database import Base
 class AgentSchema(BaseModel):
     id: str
     name: str
-    definition: str
+    system_prompt: str
+    tools: list[str]
+    model: str
+    max_steps: int
     version: int
     created_at: datetime
 
 class AgentCreateSchema(BaseModel):
     name: str
-    definition: str
+    system_prompt: str
+    tools: list[str]
+    model: str
+    max_steps: int = 10
 
 class AgentUpdateSchema(BaseModel):
     name: str
-    definition: str
+    system_prompt: str
+    tools: list[str]
+    model: str

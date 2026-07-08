@@ -6,3 +6,5 @@ postgres_data/
 .pytest_cache/
 .idea/
 .vscode/
+*.egg-info/
+.DS_Store
