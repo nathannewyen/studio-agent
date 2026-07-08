@@ -8,7 +8,10 @@ from alembic import context
 import os
 from dotenv import load_dotenv
 from database.database import Base
-from models.agent_model import AgentModel  # import so Alembic "sees" the table
+from models.agent_model import AgentModel
+from models.traces_model import TracesModel
+from models.runs_model import RunsModel
+from models.run_steps_model import RunStepsModel
 
 load_dotenv()
 
