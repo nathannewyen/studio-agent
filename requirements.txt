@@ -45,3 +45,5 @@ sqlalchemy
 psycopg2-binary
 pytest==9.0.3
 alembic==1.18.5
+anthropic==0.116.0
+tavily-python==0.7.26
