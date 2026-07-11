@@ -32,49 +32,73 @@ tools = [
     }
 ]
 
-def test_call(question):
-    response = client.messages.create(
-        model="claude-haiku-4-5",
-        max_tokens=1000,
-        messages=[{"role": "user", "content": question}],
-    )
-    return response.content[0].text
-
 def run_agent(question, max_steps = 10):
     messages = [{"role": "user", "content": question}]
     step = 0
+    completed = False
 
     while step < max_steps:
         response = client.messages.create(
             model = "claude-haiku-4-5",
-            max_tokens = 1000,
+            max_tokens = 5000,
             tools = tools,
             messages = messages
         )
     
         if response.stop_reason == "tool_use":
-            # Step 1: save Claude's response to history
+            # Save Claude's response to history
             messages.append({"role": "assistant", "content": response.content})
 
-            # Step 2: find what tool Claude wants + its input
-            tool_use = next(block for block in response.content if block.type == "tool_use")
-            tool_name = tool_use.name
-            tool_input = tool_use.input
+            # findAll tool_use blocks, not just the first
+            tool_uses = [b for b in response.content if b.type == "tool_use"]
 
-            # Step 3: run the actual tool
-            search_tool = TOOL_REGISTRY[tool_name]
-            result = tools.run(**tool_input)
+            tool_results = []
+            # Find what tool Claude wants + its input
+            for i, tool_use in enumerate(tool_uses):
+                tool_name = tool_use.name
+                tool_input = tool_use.input
 
-            # Step 4: send the result back to Claude
-            messages.append({
-                "role": "user",
-                "content": [{
+                print(f"Step {step}.{i}: Claude called {tool_name} with {tool_input}")
+
+                # Run the actual tool
+                tool = TOOL_REGISTRY[tool_name]
+                try:
+                    result = tool.run(**tool_input)
+                    is_error = False
+                except Exception as e:
+                    result = f"Tool failed: {e}"
+                    is_error = True
+                
+                tool_results.append({
                     "type": "tool_result",
                     "tool_use_id": tool_use.id,
                     "content": str(result),
-                }]
-            })
-        else:
+                    "is_error": is_error,
+                })
+
+            # Send the result back to Claude in one message
+            messages.append({"role": "user", "content": tool_results})
+        elif response.stop_reason == "end_turn":
+            completed = True
             break
+        elif response.stop_reason == "max_tokens":
+            return {
+                "answer": None,
+                "message": "Sorry, that's a big question. I'm on a budget and my token allowance ran out mid-thought 🥹",
+                "truncated": True,
+            }
+        else:
+            raise RuntimeError(f"Unexpected stop_reason: {response.stop_reason}")
         step += 1
-    return response.content[0].text
+
+    if not completed:
+        return {
+            "answer": None,
+            "truncated": False,
+            "message": " couldn't finish that one, ran out of steps while researching 😞."
+        }
+
+    return {
+        "answer": response.content[0].text,
+        "truncated": False,
+    }

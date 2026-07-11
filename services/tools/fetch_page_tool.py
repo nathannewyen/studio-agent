@@ -1,4 +1,5 @@
 import httpx
+from bs4 import BeautifulSoup
 from services.tools.base_tool import Tool
 
 class FetchPageTool(Tool):
@@ -8,4 +9,11 @@ class FetchPageTool(Tool):
     def run(self, url):
         response = httpx.get(url, timeout=10, follow_redirects=True)
         response.raise_for_status()
-        return response.text[:5000]
+        soup = BeautifulSoup(response.text, "html.parser")
+        # Remove script/style tags entirely
+
+        for tag in soup(["script", "style"]):
+            tag.decompose()
+        text = soup.get_text(separator="\n", strip=True)
+
+        return text[:5000]

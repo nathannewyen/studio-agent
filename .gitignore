@@ -8,3 +8,4 @@ postgres_data/
 .vscode/
 *.egg-info/
 .DS_Store
+test_agent.py
