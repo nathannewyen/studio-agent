@@ -8,6 +8,8 @@ class RunsModel(Base):
     id = Column(String, primary_key=True)
     trace_id = Column(String, ForeignKey("traces.id"))
     model_name = Column(String)
+    input_tokens = Column(Integer, nullable=True)
+    output_tokens = Column(Integer, nullable=True)
     total_tokens = Column(Integer, nullable=True)           # usage/cost for this run
     status = Column(String, default="running")
     started_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.UTC))
