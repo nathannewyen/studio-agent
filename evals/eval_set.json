@@ -1,0 +1,27 @@
+[
+    {
+      "id": "current-version",
+      "question": "What is the latest stable version of Next.js?",
+      "expect": "States a specific version number and cites at least one source"
+    },
+    {
+      "id": "comparison",
+      "question": "Compare Bun and Node.js for backend development. Which is more production-ready?",
+      "expect": "Covers both runtimes, mentions tradeoffs, gives a grounded recommendation with sources"
+    },
+    {
+      "id": "recent-news",
+      "question": "What did Anthropic announce most recently?",
+      "expect": "Describes a genuinely recent announcement with a source, not stale training data"
+    },
+    {
+      "id": "needs-page-read",
+      "question": "Summarize the 3 most recent posts on the Next.js blog.",
+      "expect": "Lists 3 actual recent post titles, requiring a page fetch, not just search snippets"
+    },
+    {
+      "id": "nuanced",
+      "question": "Is Postgres or MongoDB better?",
+      "expect": "Says it depends on use case, explains when each wins, does not overclaim one is universally better"
+    }
+  ]

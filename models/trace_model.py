@@ -11,3 +11,4 @@ class TracesModel(Base):
     status = Column(String, default="running")
     started_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.UTC))
     finished_at = Column(DateTime, nullable=True)
+    source = Column(String, default="api")

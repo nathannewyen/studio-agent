@@ -1,6 +1,8 @@
 import uuid
 from models.agent_model import AgentModel
 
+def get_all_agents(db):
+    return db.query(AgentModel).all()
 
 def get_agent_by_id(agent_id, db):
     return db.query(AgentModel).filter(AgentModel.id == agent_id).first()

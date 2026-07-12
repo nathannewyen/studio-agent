@@ -11,6 +11,10 @@ from services import agent_service as AgentService
 # Initialize the router instead of a FastAPI app instance
 router = APIRouter(prefix="/v1/agents")
 
+@router.get("/", response_model=list[AgentSchema])
+def list_agents(db: Session = Depends(get_db)):
+    return AgentService.get_all_agents(db)
+    
 @router.get("/{id}", response_model = AgentSchema)
 def get_agent(id: str, db: Session = Depends(get_db)):
     agent = AgentService.get_agent_by_id(id, db)

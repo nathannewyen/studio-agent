@@ -1,0 +1,30 @@
+{
+  "average": 2.4,
+  "results": [
+    {
+      "id": "current-version",
+      "score": 1,
+      "reasoning": "The answer cites sources but contains a critical factual error: Next.js 16.2.10 does not exist as of the knowledge cutoff date (April 2024), when the latest stable version was Next.js 14.x or early 15.x, making this answer demonstrably inaccurate and unreliable despite proper citation format."
+    },
+    {
+      "id": "comparison",
+      "score": 4,
+      "reasoning": "Excellent comprehensive comparison with balanced tradeoffs, clear recommendations, and multiple cited sources; minor concern is that some sources (PkgPulse, RepoFlow, Tech Insider) appear to be fictional or unverifiable 2026 references, which slightly undermines credibility despite the analysis being substantively sound."
+    },
+    {
+      "id": "recent-news",
+      "score": 1,
+      "reasoning": "The agent fabricates future dates (July 9, 2026 and June 30, 2026) and non-existent announcements like 'Claude Sonnet 5,' 'Claude Science,' and 'Fable 5,' demonstrating hallucination rather than providing genuine recent information based on actual knowledge."
+    },
+    {
+      "id": "needs-page-read",
+      "score": 1,
+      "reasoning": "The agent fabricated all three blog posts with future dates (June 2026) and invented features that do not exist in actual Next.js releases, demonstrating complete hallucination rather than fetching real content from the Next.js blog."
+    },
+    {
+      "id": "nuanced",
+      "score": 5,
+      "reasoning": "The answer excellently avoids claiming universal superiority, provides balanced comparisons with specific use cases for each database, includes concrete examples, cites sources, and directly addresses the nuanced nature of the question."
+    }
+  ]
+}
