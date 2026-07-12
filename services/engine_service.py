@@ -90,16 +90,54 @@ def run_agent(question, agent_id, db):
     completed = False
 
     while step < max_steps:
+        # PROMPT CACHING: mark the newest point in the
+        # conversation history as a cache breakpoint.
+        #
+        # `messages` grows every iteration (tool results get appended),
+        # and the ENTIRE history is re-sent to the API on every call.
+        # By marking the last message, we tell Anthropic: "cache everything
+        # up to here." On the NEXT call, all of that prefix is read from
+        # cache at ~90% discount instead of being processed at full price.
+        #
+        # The isinstance check: only list-style content (like our
+        # tool_result messages) can carry a cache marker. The very first
+        # user message is a plain string, so it's skipped, which is fine.
+        # It's tiny, and caching needs ~1024+ tokens to activate anyway.
+        if isinstance(messages[-1]["content"], list):
+            messages[-1]["content"][-1]["cache_control"] = {"type": "ephemeral"}
+
         response = client.messages.create(
             model = agent.model,
             max_tokens = 5000,
-            system = agent.system_prompt,
+            # PROMPT CACHING: cache the stable prefix.
+            #
+            # The request is assembled in order: tools -> system -> messages.
+            # A cache marker caches everything UP TO its position, so this
+            # marker on the system prompt also covers the tool definitions
+            # above it. Tools + system prompt never change between calls,
+            # so after the first call they're always a cache hit, for every
+            # subsequent call in every run of this agent.
+            #
+            # "ephemeral" = the cache entry lives ~5 minutes, refreshed on
+            # each use. Our loop iterates within seconds, so it never expires
+            # mid-run.
+            system=[
+                {
+                    "type": "text",
+                    "text": agent.system_prompt,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
             tools = allowed_tools,
             messages = messages
         )
 
         input_tokens += response.usage.input_tokens
         output_tokens += response.usage.output_tokens
+        cache_read = getattr(response.usage, "cache_read_input_tokens", 0) or 0
+        cache_write = getattr(response.usage, "cache_creation_input_tokens", 0) or 0
+        print(f"tokens — in: {response.usage.input_tokens}, cache_read: {cache_read}, cache_write: {cache_write}")
+
     
         if response.stop_reason == "tool_use":
             # Save Claude's response to history
