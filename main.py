@@ -2,11 +2,7 @@ import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database.database import engine, Base
 import routers.agent_routes, routers.run_routes, routers.trace_routes, routers.tool_routes, routers.model_routes
-
-# Tells SQLAlchemy to automatically build your tables in Postgres if they don't exist
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
